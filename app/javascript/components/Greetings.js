@@ -4,23 +4,28 @@ import { fetchGreetings } from '../redux/greetings/greetingsSlice';
 
 const Greeting = () => {
   const dispatch = useDispatch();
-  const { messages, isLoading } = useSelector((store) => store.greeting);
+  const greeting = useSelector((state) => state.greetings.greeting);
+  const status = useSelector((state) => state.greetings.status);
+  const error = useSelector((state) => state.greetings.error);
 
   useEffect(() => {
-    dispatch(fetchGreetings());
-  }, [dispatch]);
-  if (isLoading) {
-    return (
-      <div>
-        <h1>Loading...</h1>
-      </div>
-    );
+    if (status === 'idle') {
+      dispatch(fetchGreetings());
+    }
+  }, [status, dispatch]);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <article className="article">
-      <h1>{messages}</h1>
-    </article>
+    <div>
+      <h1>{greeting}</h1>
+    </div>
   );
 };
 
