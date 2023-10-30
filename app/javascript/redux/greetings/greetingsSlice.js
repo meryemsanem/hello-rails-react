@@ -1,40 +1,42 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const url = 'http://localhost:3000/greetings';
+const url = 'http://localhost:3000/api/v1/random_greeting';
 
 export const fetchGreetings = createAsyncThunk(
-  'messages/fetchGreetings',
-  async (thunkAPI) => {
+  'greetings/fetchGreetings',
+  async () => {
     try {
       const resp = await axios.get(url);
-      return resp.data;
+      return resp.data.greeting;
     } catch (error) {
-      return thunkAPI.rejectWithValue({ error: 'ERROR' });
+      throw error;
     }
   }
 );
 
-const initialState = {
-  loading: false,
-  messages: [],
-  errors: null,
-  isLoading: false,
-};
-
-const messagesSlice = createSlice({
-  name: 'greeting',
-  initialState,
+const greetingsSlice = createSlice({
+  name: 'greetings',
+  initialState: {
+    greeting: '',
+    status: 'idle',
+    error: null,
+  },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchGreetings.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(fetchGreetings.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.messages = action.payload;
-    });
+    builder
+      .addCase(fetchGreetings.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchGreetings.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.greeting = action.payload;
+      })
+      .addCase(fetchGreetings.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
   },
 });
 
-export default messagesSlice.reducer;
+export default greetingsSlice.reducer;
