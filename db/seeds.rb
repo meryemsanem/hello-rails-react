@@ -6,6 +6,11 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-5.times do
+
   Greeting.create(message: "Welcome to my website!")
-end
+  Greeting.create(message: "Hey there!")
+  Greeting.create(message: "Good day!")
+  Greeting.create(message: "Greetings #1!")
+  Greeting.create(message: "Happy Coding!")
+
+
